@@ -1,0 +1,45 @@
+﻿.card {
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #f7f7f7;
+    padding: 10px;
+}
+
+    .card-header h2 {
+        margin: 0;
+    }
+
+.card-body {
+    padding: 10px;
+}
+
+.card-img-top {
+    height: 10%;
+    object-fit: cover;
+}
+
+.card-link {
+    display: block;
+    margin-top: 10px;
+}
+
+.card:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.container{
+    margin-right:auto!important;
+    margin-left:auto!important;
+
+}
+.carding{
+    height:25vh!important;
+}
+.hell{
+    margin-bottom:25px!important;
+    
+
+}

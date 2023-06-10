@@ -1,0 +1,88 @@
+﻿@model IEnumerable<MortgageMoniteringSystem.Models.FeatureFlag>
+@using Microsoft.Extensions.Configuration;
+@*@using MortgageMoniteringSystem.Services;
+
+@inject IFeatureManagementService _featureManagement*@
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/Switch.css" />
+}
+
+<h1>Index</h1>
+
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Feature ID
+            </th>
+            <th>
+                Feature Name
+            </th>
+            <th>
+                Feature Description
+            </th>
+            <th>
+                Feature Access
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FeatureId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FeatureName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FeatureDescription)
+                </td>
+                <td>
+                    @{
+                        bool checkValue = true;
+                    }
+                    <div class="toggle-switch">
+                        <input type="checkbox" id="@item.FeatureId" name="myToggleSwitch" checked="@checkValue" onchange="toggleSwitch(@item.FeatureId)" class="toggle-switch input" />
+                        <label for="@item.FeatureId" class="toggle-switch label"></label>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts{
+    <script>
+        function toggleSwitch(toggleId) {
+            var toggleSwitch = document.getElementById(toggleId);
+            var itemId = toggleId;
+            var accessValue = toggleSwitch.checked;
+            console.log("toggle switch is getting triggered" + " " + toggleId + " " + accessValue)
+            var xhr = new XMLHttpRequest();
+            xhr.open("PATCH", "/RiskManagers/ToggleAccess?id=" +toggleId+"&access=" +accessValue, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 204) {
+                    alert("Access toggled successfully");
+                }
+            };
+            xhr.send();
+            // xhr.send("?id=toggleId&access=accessValue");
+            /*xhr.send(JSON.stringify({
+                id : itemId,
+                access : accessValue
+            }))
+            */
+        }
+    </script>
+}

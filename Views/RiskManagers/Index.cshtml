@@ -1,0 +1,108 @@
+﻿@model IEnumerable<MortgageMoniteringSystem.Models.RiskManager>
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/Switch.css" />
+    <link rel="stylesheet" href="~/css/CreateNewLink.css" />
+}
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RiskManagerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RiskManagerMail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RiskManagerPassword)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RiskManagerAccess)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RiskManagerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RiskManagerMail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RiskManagerPassword)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RiskManagerAccess)
+            </td>
+            <td>
+                @{
+                    bool checkValue;
+                    if (item.RiskManagerAccess == "allow")
+                        checkValue = true;
+                    else
+                        checkValue = false;
+                }
+                <div class="toggle-switch">
+                    <input type="checkbox" id="@item.RiskManagerId" name="myToggleSwitch" checked="@checkValue" onchange="toggleSwitch(@item.RiskManagerId)" class="toggle-switch input" />
+                    <label for="@item.RiskManagerId" class="toggle-switch label"></label>
+                </div>
+                @*
+                 <input type="checkbox" id="@item.RiskManagerId" name="myToggleSwitch" checked="@checkValue" onchange="toggleSwitch(@item.RiskManagerId)" />
+                 <label for="@item.RiskManagerId"></label>
+                *@
+
+                <!--
+                <a asp-action="Details" asp-route-id="@item.RiskManagerId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.RiskManagerId">Delete</a>
+                -->
+              </td>
+              <td>
+                  <a class="btn btn-primary" asp-action="Details" asp-route-id="@item.RiskManagerId">Details</a>
+              </td>
+              <td>
+                  <a class="btn btn-danger" asp-action="Delete" asp-route-id="@item.RiskManagerId">Delete</a>
+              </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@section scripts{
+    <script>
+        function toggleSwitch(toggleId) {
+            var toggleSwitch = document.getElementById(toggleId);
+            var itemId = toggleId;
+            var accessValue = toggleSwitch.checked;
+            console.log("toggle switch is getting triggered" + " " + toggleId + " " + accessValue)
+            var xhr = new XMLHttpRequest();
+            xhr.open("PATCH", "/RiskManagers/ToggleAccess?id=" + toggleId + "&access=" + accessValue, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 204) {
+                    alert("Access toggled successfully");
+                }
+            };
+            xhr.send();
+            // xhr.send("?id=toggleId&access=accessValue");
+            /*xhr.send(JSON.stringify({
+                id : itemId,
+                access : accessValue
+            }))
+            */
+        }
+    </script>
+}

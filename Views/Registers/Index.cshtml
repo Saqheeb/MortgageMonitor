@@ -1,0 +1,98 @@
+﻿@model IEnumerable<MortgageMoniteringSystem.Models.Register>
+
+@section Styles{
+    <link rel="stylesheet" href="~/css/Switch.css" />
+}
+
+@{
+    ViewData["Title"] = "";
+}
+
+<center><h1 style="color:blue">All Users</h1></center>
+
+<p>
+    @*<a asp-action="Create">Create New</a>*@
+</p>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Username)
+            </th>
+          @*  <th>
+                @Html.DisplayNameFor(model => model.UserPassword)
+            </th>*@
+            <th>
+                @Html.DisplayNameFor(model => model.Access)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Username)
+            </td>
+@*            <td>
+                @Html.DisplayFor(modelItem => item.UserPassword)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.Access)
+            </td>
+            <td>
+                    @{
+                        bool checkValue;
+                        if (item.Access == "allow")
+                            checkValue = true;
+                        else
+                            checkValue = false;
+                        
+                    }
+                <div class="toggle-switch">
+                        <input type="checkbox" id="@item.Id" name="myToggleSwitch" checked="@checkValue" onchange="toggleSwitch(@item.Id)" class="toggle-switch input" />
+                    <label for="@item.Id" class="toggle-switch label"></label>
+                </div>
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> 
+                @*<a asp-action="Details" asp-route-id="@item.Id">Details</a> *@
+                @*<a asp-action="Delete" asp-route-id="@item.Id">Delete</a>*@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+@section scripts{
+    <script>
+        function toggleSwitch(toggleId) {
+            var toggleSwitch = document.getElementById(toggleId);
+            //var itemId = toggleId;
+            var accessValue = toggleSwitch.checked;
+            console.log("toggle switch is getting triggered" + " " + toggleId + " " + accessValue)
+            var xhr = new XMLHttpRequest();
+            xhr.open("PATCH", "/Registers/ToggleAccess?id=" + toggleId + "&access=" + accessValue, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 204) {
+                    alert("Access toggled successfully");
+                }
+            };
+            xhr.send();
+            // xhr.send("?id=toggleId&access=accessValue");
+            /*xhr.send(JSON.stringify({
+                id : itemId,
+                access : accessValue
+            }))
+            */
+        }
+    </script>
+}
