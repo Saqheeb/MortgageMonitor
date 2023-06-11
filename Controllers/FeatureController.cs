@@ -1,12 +1,20 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using MortgageMoniteringSystem.Models;
+using MortgageMoniteringSystem.Services;
 //using MortgageMoniteringSystem.Services;
 
 namespace MortgageMoniteringSystem.Controllers
 {
     public class FeatureController : Controller
     {
+        private const string connectionStr = "Endpoint=https://myappcalcreact.azconfig.io;Id=NgAX;Secret=Z0BYRA46JSMZK/sdjWF28RgwrXNblkAD91FzUGhU2xw=";
+
+        private const string calcLabel = "Calculator";
+
+
+        FeatureManagementService obj = new FeatureManagementService(connectionStr, calcLabel);
         //private readonly IFeatureManagementService _featureManagementService;
 
         //public FeatureController(FeatureManagementService service)
@@ -21,16 +29,20 @@ namespace MortgageMoniteringSystem.Controllers
             {
                 new FeatureFlag()
                 {
-                    FeatureId = 1,
+                    UniqueId = 1,
+                    Label = calcLabel,
+                    FeatureId = "showcalc",
                     FeatureName = "Calculator",
                     FeatureDescription = "Calcualtor Feature in Risk Automation System"
                 },
-                new FeatureFlag()
-                {
-                    FeatureId = 2,
-                    FeatureName = "Risk-O-Meter",
-                    FeatureDescription = "This feature is a dynamic meter for all the result"
-                },
+                //new FeatureFlag()
+                //{
+                //    UniqueId= 2,
+                //    Label = "RiskMeter",
+                //    FeatureId = "showRisk",
+                //    FeatureName = "Risk-O-Meter",
+                //    FeatureDescription = "This feature is a dynamic meter for all the result"
+                //},
             };
 
             return View(flags);
@@ -92,6 +104,25 @@ namespace MortgageMoniteringSystem.Controllers
             catch
             {
                 return View();
+            }
+        }
+
+        //PATCH: Feature/ToggleAccess
+        [HttpPatch]
+        public IActionResult ToggleAccess(int uniqueId, string featureFlagId ,bool access)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Feature patch getting triggered!!!" + " " + uniqueId + " " + featureFlagId + " " + access);
+            
+            if ( uniqueId == 1)
+            {
+                obj.SetFlagStatus(featureFlagId, access);
+                return Ok();
+            }
+            else
+            {
+                return UnprocessableEntity("flag is out of service!!!");
+
             }
         }
     }
